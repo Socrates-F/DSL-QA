@@ -1,7 +1,14 @@
 from TestScriptVisitor import TestScriptVisitor
 from TestScriptParser import TestScriptParser
 from selenium.webdriver.common.by import By
-import time
+from selenium.webdriver.chrome.options import Options
+
+options = Options()
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+
+driver = webdriver.Chrome(options=options)
 
 class SeleniumGenerator(TestScriptVisitor):
     def __init__(self):
