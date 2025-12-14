@@ -1,4 +1,4 @@
-````markdown
+
 # TestScript DSL - Automação de Testes Web com Selenium
 
 Este projeto implementa uma Linguagem de Domínio Específico (DSL) projetada para simplificar a criação de scripts de automação e testes para navegadores web. O compilador traduz comandos de alto nível da DSL para código Python utilizando a biblioteca **Selenium**.
