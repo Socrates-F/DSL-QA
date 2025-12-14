@@ -55,7 +55,7 @@ O projeto foi implementado seguindo a estrutura clássica de compiladores, utili
   * **Python 3.11+** instalado.
   * **Navegadores Suportados (Sistema Híbrido):**
       * **Google Chrome / Chromium:** Necessário para rodar em ambientes Docker ou GitHub Codespaces.
-      * **Mozilla Firefox / Floorp:** Suportado para execução local (Linux/Nobara), caso o Chrome não esteja disponível.
+      * **Mozilla Firefox:** Suportado para execução local (Linux), caso o Chrome não esteja disponível.
 
 ### Instalação das Dependências
 
@@ -115,7 +115,7 @@ Ao rodar no Codespaces, tentar clicar em links ou abrir portas de debug (ex: 922
 
 ### 3\. Suporte ao Nobara/Fedora
 
-Para facilitar o desenvolvimento local em sistemas como o Nobara Linux (onde o Chrome pode não ser o padrão), o gerador possui um **fallback automático**. Se ele não encontrar o Chrome, tentará utilizar o driver do **Firefox/Floorp**.
+Para facilitar o desenvolvimento local em sistemas como o Linux (onde o Chrome pode não ser o padrão), o gerador possui um **fallback automático**. Se ele não encontrar o Chrome, tentará utilizar o driver do **Firefox**.
 
 -----
 
