@@ -1,115 +1,162 @@
-# TestScript DSL - Automação de Testes Web
+# TestScript DSL - Automação de Testes Web com Selenium
 
-Este projeto implementa uma Linguagem de Domínio Específico (DSL) projetada para simplificar a criação de scripts de automação e testes para navegadores web. O compilador traduz comandos de alto nível da DSL para código Python utilizando a biblioteca **Playwright/Selenium**.
+Este projeto implementa uma Linguagem de Domínio Específico (DSL) projetada para simplificar a criação de scripts de automação e testes para navegadores web. O compilador traduz comandos de alto nível da DSL para código Python utilizando a biblioteca **Selenium**.
 
 ## 👥 Equipe
 
-* **[Eduardo José Ferreira de Souza]**
-* **[Mateus Gonçalves Cunha]**
-* **[Sócrates Farias de Oliveira]**
+  * **[Eduardo José Ferreira de Souza]**
+  * **[Mateus Gonçalves Cunha]**
+  * **[Sócrates Farias de Oliveira]**
 
 -----
 
 ## 🚀 Motivação e Descrição Informal
 
 ### O Problema
-Escrever scripts de teste de automação web diretamente em código pode ser uma tarefa repetitiva e verbosa. O testador precisa lidar constantemente com configurações de drivers, importações complexas, esperas explícitas e seletores longos.
+
+Escrever scripts de teste em **Selenium** diretamente em Python (ou Java) pode ser uma tarefa repetitiva e verbosa. O testador precisa lidar constantemente com configurações de drivers, importações complexas, esperas explícitas (`WebDriverWait`) e seletores CSS longos, o que dificulta a leitura e a manutenção dos testes por pessoas que não são desenvolvedoras sêniores.
 
 ### A Solução
-A **TestScript DSL** foi criada para abstrair essa complexidade. Ela permite descrever cenários de teste de forma declarativa e legível, focando na **intenção** do usuário (ex: "abra este site", "clique ali", "espere ver tal texto") em vez da implementação técnica.
 
-### Exemplo de Código DSL
+A **TestScript DSL** foi criada para abstrair a complexidade do Selenium. Ela permite descrever cenários de teste de forma declarativa e legível, focando na **intenção** do usuário (ex: "abra este site", "clique ali", "espere ver tal texto") em vez da **implementação**.
+
+### Estrutura da Linguagem
+
+A linguagem é imperativa e estruturada em blocos de teste. Cada teste possui um nome único e uma sequência de comandos.
+
+Exemplo informal:
+
+> "Abra o Google, digite 'Compiladores' na barra de busca, clique em pesquisar e garanta que o título da página mudou."
+
+Na DSL:
+
 ```text
 test busca_google:
-    open "[https://google.com](https://google.com)"
+    open "https://google.com"
     type "textarea[name=q]" "Compiladores"
     click "input[name=btnK]"
     expect_title "Compiladores"
-````
+```
 
 -----
 
 ## 🛠️ Estrutura do Compilador
 
-O projeto utiliza a ferramenta **ANTLR4** para análise léxica e sintática.
+O projeto foi implementado seguindo a estrutura clássica de compiladores, utilizando a ferramenta **ANTLR4**:
 
-1.  **Gramática (`TestScript.g4`):** Define as regras da linguagem.
-2.  **Parser/Lexer:** Gerados automaticamente pelo ANTLR em Python.
-3.  **Gerador (Visitor):** Percorre a árvore sintática e traduz os comandos DSL para script Python final.
+1.  **Análise Léxica e Sintática:** Definidas formalmente no arquivo `TestScript.g4`. O ANTLR gera os lexers e parsers em Python.
+2.  **Árvore Sintática (Parse Tree):** O parser gera uma árvore que representa a estrutura gramatical do script de entrada.
+3.  **Geração de Código (Visitor):** Utilizamos o padrão **Visitor** (classe `SeleniumGenerator.py`) para percorrer a árvore sintática.
+      * Cada nó da árvore (comando da DSL) é visitado e traduzido para seu equivalente em Python + Selenium.
+      * O compilador gerencia automaticamente os `imports`, a instanciação do `webdriver` e o tratamento de argumentos de linha de comando no arquivo de saída.
 
 -----
 
 ## 📦 Como Executar
 
-### Pré-requisitos Gerais
+### Pré-requisitos
 
-  * **Python 3.11+** instalado.
+  * **Python 3.x** instalado.
+  * **Google Chrome** instalado.
 
-### 1\. Instalação das Dependências Básicas
+### Instalação das Dependências
 
-No terminal, execute:
+Execute o comando abaixo para instalar o runtime do ANTLR e o Selenium:
 
 ```bash
-pip install -r requirements.txt
+pip install antlr4-python3-runtime selenium
 ```
 
-### 2\. Compilando a DSL
+### Compilando e Gerando o Código
 
-O arquivo principal de entrada é o `src/mainTests.py`. Ele lê o arquivo de teste (padrão: `tests/tests.dsl`) e gera o script de saída.
+O arquivo principal de entrada é o `src/mainTests.py`. Ele lê o arquivo de teste (padrão: `tests/tests.dsl`) e gera o arquivo `src/saida_selenium.py`.
+
+1.  Navegue até a pasta do projeto.
+2.  Execute o compilador:
+
+<!-- end list -->
 
 ```bash
 python src/mainTests.py
 ```
 
------
+*Saída esperada:* `Código Selenium gerado em: .../src/saida_selenium.py`
 
-## 🚀 Execução no GitHub Codespaces (Playwright)
+### Executando o Teste Gerado
 
-O ambiente do Codespaces utiliza um contêiner Linux leve. Para garantir que o navegador abra corretamente e você consiga visualizar os testes, siga rigorosamente os passos abaixo:
+O arquivo gerado (`saida_selenium.py`) é um script Python autônomo. Ele permite rodar todos os testes ou um teste específico via linha de comando.
 
-### 1\. Instalação de Dependências do Sistema
-
-O Codespaces não possui bibliotecas gráficas (como `libatk`, `libgtk`, etc.) instaladas por padrão. Sem elas, o navegador fecha imediatamente.
-
-Execute no terminal **uma única vez**:
+Para rodar **todos** os testes definidos na DSL:
 
 ```bash
-# Instala os binários do navegador
-pip install playwright
-
-# (CRÍTICO) Instala as dependências de sistema do Linux para rodar navegadores
-# Isso corrige o erro: "error while loading shared libraries: libatk-1.0.so.0"
-# Entre no na pasta ./src e rode o seguinte comando:
-playwright install-deps
+python src/saida_selenium.py all
 ```
 
-### 2\. Executando os Testes
-
-Após gerar o script (passo de compilação acima), execute:
+Para rodar **um teste específico** (pelo nome definido na DSL):
 
 ```bash
-python src/saida_playwright.py all
+python src/saida_selenium.py login_valido
 ```
-
-*Isso gerará um arquivo `trace.zip` contendo a gravação da execução.*
-
-### 3\. 🔎 Visualizando a Execução (Trace Viewer)
-
-Como o Codespaces roda em modo *headless* (sem monitor), você não verá o navegador abrindo. Para visualizar o passo a passo (telas, cliques e logs), utilize o **Trace Viewer** com uma porta específica:
-
-```bash
-playwright show-trace trace.zip --port 9323
-```
-
-> **Nota Importante:** A flag `--port 9323` é essencial no Codespaces. Ela evita erros de protocolo ("Internal server error, session closed") e garante que o VS Code faça o redirecionamento de porta corretamente. Após rodar o comando, clique no link `http://localhost:9323` que aparecerá no terminal.
 
 -----
 
-## ⚠️ Limitações e Notas Técnicas
+## 📝 Exemplos de Programas
 
-1.  **Execução Headless:** Por padrão, em ambientes CI/CD ou Codespaces, os testes rodam sem interface gráfica para economizar recursos.
-2.  **Arquivos de Trace:** Em caso de falha ou para auditoria, verifique sempre o arquivo `trace.zip` gerado. Ele contém snapshots do DOM, screenshots e timeline da execução.
-3.  **Ambiente Local:** Se estiver rodando em sua máquina local (Windows/Linux/Mac) com interface gráfica, o comando `install-deps` geralmente não é necessário, e o Trace Viewer pode ser aberto sem especificar a porta.
+Abaixo estão exemplos da sintaxe suportada pela linguagem (baseados no arquivo `tests/tests.dsl`).
+
+### 1\. Teste de Login Simples
+
+Verifica se o login ocorre com sucesso e se a mensagem de boas-vindas aparece.
+
+```text
+test login_valido:
+    open "https://the-internet.herokuapp.com/login"
+    type "#username" "tomsmith"
+    type "#password" "SuperSecretPassword!"
+    click "button[type=submit]"
+    wait ".flash" 5000
+    expect "You logged"
+```
+
+### 2\. Preenchimento de Formulário e Scroll
+
+Demonstra o uso de scroll e interação com diferentes inputs.
+
+```text
+test formulario:
+    open "https://demoqa.com/automation-practice-form"
+    type "#firstName" "Carlos"
+    type "#lastName" "Silva"
+    click "#gender-radio-1"
+    scroll "down"
+    submit "#submit"
+    wait ".modal-content" 5000
+    expect "Thanks"
+```
+
+### 3\. Upload de Arquivos
+
+A DSL simplifica drasticamente o comando de upload de arquivos.
+
+```text
+test upload_arquivo:
+    open "https://the-internet.herokuapp.com/upload"
+    upload "#file-upload" "../tests/upload_test.txt"
+    click "#file-submit"
+    wait "h3" 5000
+    expect "File Uploaded!"
+```
+
+### 4\. Busca no Github (Wait Explícito)
+
+Uso de espera explicita para elementos dinâmicos.
+
+```text
+test github_search:
+    open "https://github.com/search?q=antlr+python"
+    wait_visible "div[data-testid='results-list']" 10000
+    expect "antlr"
+```
 
 -----
 
@@ -121,8 +168,11 @@ playwright show-trace trace.zip --port 9323
 | **open** | `open "URL"` | Abre uma URL no navegador. |
 | **click** | `click "seletor"` | Clica em um elemento CSS. |
 | **type** | `type "seletor" "texto"` | Digita texto em um input. |
+| **upload** | `upload "seletor" "caminho"` | Faz upload de um arquivo local. |
+| **submit** | `submit "seletor"` | Submete um formulário. |
+| **scroll** | `scroll "down"` | Rola a página para baixo (ou para cima). |
 | **wait** | `wait "seletor" MS` | Espera até X ms pela presença do elemento. |
-| **expect** | `expect "texto"` | Asserta que o texto existe no código fonte. |
+| **wait\_visible**| `wait_visible "seletor" MS`| Espera até X ms pela visibilidade do elemento. |
+| **expect** | `expect "texto"` | Asserta que o texto existe no código fonte da página. |
+| **expect\_title**| `expect_title "texto"` | Asserta que o texto está no título da aba. |
 | **screenshot** | `screenshot "nome.png"` | Tira um print da tela. |
-
-```
