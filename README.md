@@ -79,7 +79,8 @@ pip install playwright
 
 # (CRÍTICO) Instala as dependências de sistema do Linux para rodar navegadores
 # Isso corrige o erro: "error while loading shared libraries: libatk-1.0.so.0"
-pip playwright install-deps
+# Entre no na pasta ./src e rode o seguinte comando:
+playwright install-deps
 ```
 
 ### 2\. Executando os Testes
