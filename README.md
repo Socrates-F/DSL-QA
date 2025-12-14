@@ -6,8 +6,8 @@ Este projeto implementa uma Linguagem de Domínio Específico (DSL) projetada pa
 ## 👥 Equipe
 
 * **[Eduardo José Ferreira de Souza]**
-* **[NOME DO INTEGRANTE 2]**
-* **[NOME DO INTEGRANTE 3]**
+* **[Mateus Gonçalves Cunha]**
+* **[Sócrates Farias de Oliveira]**
 
 -----
 
