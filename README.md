@@ -75,11 +75,11 @@ Execute no terminal **uma única vez**:
 
 ```bash
 # Instala os binários do navegador
-playwright install
+pip install playwright
 
 # (CRÍTICO) Instala as dependências de sistema do Linux para rodar navegadores
 # Isso corrige o erro: "error while loading shared libraries: libatk-1.0.so.0"
-sudo playwright install-deps
+pip playwright install-deps
 ```
 
 ### 2\. Executando os Testes
